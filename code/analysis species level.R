@@ -1,12 +1,32 @@
 # load DB first
+messinian_db <- read.csv(file = "data/messinianDB.csv")
 
-timebins=c("Tortonian", "pre-evaporitic Messinian","Zanclean")
-regions=c("Eastern Mediterranean","Po Plain-Northern Adriatic","Western Mediterranean")
-group.names= c("benthic_foraminifera","bivalves", "bryozoans" ,  "corals",  "dinoflagellates","echinoids","fish", "gastropods" ,"marine_mammals","nanoplankton", "ostracods" ,  "planktic_foraminifera", "scaphopod_chitons_cephalopods", "sharks") 
+#### Define constants ####
+timebins <- unique(messinian_db$Age)[c(3, 1, 2)] # sorted from old to young
+regions <- unique(messinian_db$region.new)
+group.names <- unique(messinian_db$group.name)
+
+messinian_db$Species.name = replace(messinian_db$Species.name, messinian_db$Species.name == "sp.", NA)
+messinian_db$Genus.name = replace(messinian_db$Genus.name, messinian_db$Genus.name == "indet.", NA)
+messinian_db = messinian_db[ !messinian_db$Family == "indet.",  ]
 
 #### Aux Functions
 {
-MSCSample=function(taxLevel,group,basin,timeslice){
+MSCSample=function(group, basin, timeslice, taxLevel = "species"){
+  #'
+  #' @title extract occurrence from Messinian database
+  #' 
+  #' @description
+    #' returns a vector of taxon names from the Messinian DB on the specified taxonomic level
+    #' 
+  #' 
+  #' @param taxLevel "species","genus" or "family". Taxonomic level to extract
+  #' @param group character, element of _group.names_ or "all groups". Taxonomic groups to retreive
+  #' @param basin character, element of _regions_ or "whole basin". From which area occurrences are selected
+  #' @param timeslice character, element of _timebins_ or "all timeslices". Time interval of interest
+  #' 
+  #' @returns character vector of taxon names on the specified taxonomic level
+  
   #### groups 
   stopifnot(group %in% c('all groups',group.names))
   if (group=='all groups'){
@@ -53,6 +73,7 @@ MSCSample=function(taxLevel,group,basin,timeslice){
   return(occ)
 }
 
+# test
 MSCSample(taxLevel = "species",
           group="all groups",
           timeslice = "all timeslices",
@@ -61,11 +82,24 @@ MSCSample(taxLevel = "species",
 rarefyTaxRichness=function(mySample, subsampleTo=1,noOfRep=1000){
   stopifnot(length(mySample)>=subsampleTo)
   stopifnot(!is.na(mySample))
-  taxRichness=sapply(1:noOfRep, function(x) length(unique(sample(mySample,size=subsampleTo,replace=FALSE))))
+  taxRichness=sapply(seq_len(noOfRep), function(x) length(unique(sample(mySample,size=subsampleTo,replace=FALSE))))
   return(taxRichness)
 }
 
-rarefyEcoIndexes=function(mySample1,mySample2,subsampleTo=1,noOfRep=1000){
+rarefyEcoIndexes=function(mySample1, mySample2, subsampleTo=1, noOfRep=1000){
+  #' 
+  #' @title pairwise rarefaction for ecological parameters
+  #' 
+  #' @param mySample1 first vector of taxon names
+  #' @param mySample2 second vector of taxon names
+  #' @param subsampleto target sample size for subsampling.
+  #' @param noOfRep integer, number of subsampling repetitions
+  #' 
+  #' @description
+    #' performs pairwise subsampling from two vectors of taxon names, and returns 
+    #' key ecological indices (soerensen & simpson index, nestedness)
+  #'
+  #' @returns a list with three names elements: "soerensen", "simpson", "nestedness", each a vector of length _noOfRep_, containing the ecological indices of the i-th subsampling run 
   stopifnot(length(mySample1)>=subsampleTo & length(mySample2)>=subsampleTo)
   stopifnot(!is.na(c(mySample1,mySample2)))
   
