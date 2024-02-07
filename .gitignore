@@ -4,4 +4,4 @@
 .Ruserdata
 
 # figures
-/figs*
+*.pdf
