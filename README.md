@@ -21,8 +21,20 @@ ORCID: [0000-0001-8073-559X](https://orcid.org/0000-0001-8073-559X)
 
 Apache 2.0, see LICENSE file for full text.
 
-## Repository structure
+## Requirements
+
+Base R and the RStudio IDE.
+
+## Reproducing Results
+
+In the RStudio IDE, open the file _messinian_biodiv.Rproj_. This opens the RProject of the same name. Then, run
+
+```R
+source("code/analysis.R")
+```
+
+to produce all figures in the _figs_ folder.
 
 ## Funding
 
-This work was supported by the Austrian Science Fund (FWF) project “Late Miocene Mediterranean Marine Ecosystem Crisis” (2022–2026), Grant DOI 10.55776/V986 (PI: K.Agiadi)."  
+This work was supported by the Austrian Science Fund (FWF) project “Late Miocene Mediterranean Marine Ecosystem Crisis” (2022–2026), Grant DOI 10.55776/V986 (PI: K.Agiadi)." 
