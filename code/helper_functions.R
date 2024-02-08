@@ -3,7 +3,7 @@ get_from_db=function(group, basin, timeslice, taxLevel = "species"){
   #' @title extract occurrence from Messinian database
   #' 
   #' @description
-  #' returns a vector of taxon names from the Messinian DB on the specified taxonomic level, sub basin, and time slice
+  #' returns a vector of taxon names from the Messinian DB on the specified taxonomic level, region, and time slice
   #' 
   #' 
   #' @param taxLevel "species","genus" or "family". Taxonomic level to extract
@@ -47,13 +47,13 @@ get_from_db=function(group, basin, timeslice, taxLevel = "species"){
   }
   if (taxLevel=="genus"){
     taxIndex=!is.na(messinian_db$Genus.name)  & !is.na(messinian_db$Family)
-    occ=paste(messinian_db$Genus.name)
+    occ=messinian_db$Genus.name
     occ=occ[taxIndex ==TRUE & basinIndex==TRUE & timesliceIndex==TRUE & groupIndex==TRUE]
   }
   
   if (taxLevel=="family"){
     taxIndex=!is.na(messinian_db$Family)
-    occ=paste(messinian_db$Family)
+    occ=messinian_db$Family
     occ=occ[taxIndex ==TRUE & basinIndex==TRUE & timesliceIndex==TRUE & groupIndex==TRUE]
   }
   return(occ)
