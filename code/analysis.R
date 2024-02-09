@@ -102,7 +102,7 @@ for (group in group.names.ext){
     sr_median[group, "Zanclean", reg] = median(Zan_sr)
     
     file_name = paste0("figs/sr_through_time_regional/sr_through_time_", group, "_",  reg ,".pdf")
-    ylab = "Species Richness"
+    ylab = paste0("Species richness \n subsampled to ",  subsampleTo, " Occurrences")
     main = paste0("Species Richness ", group, " ", reg)
     ylim = c(0, max(c(Tor_sr, Mes_sr, Zan_sr)))
     pdf(file = file_name)
@@ -188,4 +188,8 @@ sr_change["all groups", , "whole basin"]
 eco_ind_median["fish", "T vs. M", "whole basin", "simpson"]
 
 
-
+sr_change[,"TvsM", "whole basin"]
+sr_change[,"MvsZ", "whole basin"]
+eco_ind_median[, "T vs. M", "whole basin", "soerensen"]
+eco_ind_median[, "M vs. Z", "whole basin", "soerensen"]
+eco_ind_median[, "T vs. Z", "whole basin", "soerensen"]
