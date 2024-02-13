@@ -38,7 +38,7 @@ for (group in group.names.ext){
   # subsample noOfRep times
   Tor_sr = rarefyTaxRichness(mySample = Tor, subsampleTo = subsampleTo, noOfRep = noOfRep)
   Mes_sr = rarefyTaxRichness(mySample = Mes, subsampleTo = subsampleTo, noOfRep = noOfRep)
-  Zan_sr = rarefyTaxRichness(mySample = Tor, subsampleTo = subsampleTo, noOfRep = noOfRep)
+  Zan_sr = rarefyTaxRichness(mySample = Zan, subsampleTo = subsampleTo, noOfRep = noOfRep)
   # make figure
   file_name = paste0("figs/sr_through_time/sr_through_time_whole_basin_",group,".pdf")
   main = paste0("Species Richness ", group, " whole basin")
@@ -100,7 +100,7 @@ for (group in group.names.ext){
     subsampleTo = ceiling(0.8 * (min(c(length(Tor), length(Mes), length(Zan)))))
     Tor_sr = rarefyTaxRichness(mySample = Tor, subsampleTo = subsampleTo, noOfRep = noOfRep)
     Mes_sr = rarefyTaxRichness(mySample = Mes, subsampleTo = subsampleTo, noOfRep = noOfRep)
-    Zan_sr = rarefyTaxRichness(mySample = Tor, subsampleTo = subsampleTo, noOfRep = noOfRep)
+    Zan_sr = rarefyTaxRichness(mySample = Zan, subsampleTo = subsampleTo, noOfRep = noOfRep)
     sr_median[group, "Tortonian", reg] = median(Tor_sr)
     sr_median[group, "pre-evaporitic Messinian", reg] = median(Mes_sr)
     sr_median[group, "Zanclean", reg] = median(Zan_sr)
