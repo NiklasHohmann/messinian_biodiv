@@ -4,6 +4,9 @@ cat("Running analysis, please wait...\n")
 cat("Loading data\n")
 messinian_db <- read.csv(file = "data/messinianDB.csv")
 
+#### Set seet ####
+set.seed(1)
+
 #### Replace invalid tax names with NA ####
 messinian_db$Species.name = replace(messinian_db$Species.name, messinian_db$Species.name == "sp.", NA)
 messinian_db$Genus.name = replace(messinian_db$Genus.name, messinian_db$Genus.name == "indet.", NA)
@@ -16,6 +19,7 @@ group.names <- unique(messinian_db$group.name)
 group.names.ext = c(group.names, "all groups")
 regions.ext = c(regions, "whole basin")
 eco_index_names = c("soerensen", "simpson", "nestedness")
+timebin_comp = c("T vs. M", "M vs. Z", "T vs. Z")
 noOfRep = 10000 # number of repetitions for subsampling
 
 #### Load helper functions ####
@@ -119,18 +123,18 @@ for (group in group.names.ext){
 #### Ecological indices through time per region ( all groups) ####
 
 eco_ind_median = array(data = NA,
-                         dim = c(length(group.names.ext), 3, length(regions.ext), length(eco_index_names)),
+                         dim = c(length(group.names.ext), length(timebin_comp), length(regions.ext), length(eco_index_names)),
                          dimnames = list("group" = group.names.ext,
-                                         "timebins" = c("T vs. M", "M vs. Z", "T vs. Z"),
+                                         "timebins" = timebin_comp,
                                          "regions" = regions.ext,
                                          "index" = eco_index_names))
 
 cat("Determining regional ecological indices\n")
-for (group in c(group.names, "all groups")){
+for (group in c(group.names.ext)){
   for (reg in regions.ext){
-    Tor = get_from_db(group = group, basin = "whole basin", timeslice = "Tortonian" )
-    Mes = get_from_db(group = group, basin = "whole basin", timeslice = "pre-evaporitic Messinian" )
-    Zan = get_from_db(group = group, basin = "whole basin", timeslice = "Zanclean" )
+    Tor = get_from_db(group = group, basin = reg, timeslice = "Tortonian" )
+    Mes = get_from_db(group = group, basin = reg, timeslice = "pre-evaporitic Messinian" )
+    Zan = get_from_db(group = group, basin = reg, timeslice = "Zanclean" )
     subsampleTo = ceiling(0.8 * (min(c(length(Tor), length(Mes), length(Zan)))))
     TM = rarefyEcoIndexes(Tor, Mes, subsampleTo, noOfRep)
     MZ = rarefyEcoIndexes(Mes, Zan, subsampleTo, noOfRep)
@@ -177,7 +181,7 @@ cat("Done. Outputs are in the folder \"figs\" and the variables \"sr_change\" an
 # second entry: "TvsM","MvsZ", or "TvsZ": time slice to compare
 # third entry: name out of regions.ext: region to examine
 # retruns change in median species richness
-sr_change["all groups", , "whole basin"] 
+#sr_change["all groups", "TvsM", "whole basin"] 
 
 ## extracting median ecological indices in PERCENT
 # first entry: group name, element of group.names.ext
@@ -185,7 +189,7 @@ sr_change["all groups", , "whole basin"]
 # third entry: region of interest, element of regions.ext
 # fourth entry: ecological index, element of eco_index_names
 # returns median ecological index for the specified case.
-eco_ind_median["fish", "T vs. M", "whole basin", "simpson"]
+#eco_ind_median["fish", "T vs. M", "whole basin", "simpson"]
 
 
 sr_change[,"TvsM", "whole basin"]
