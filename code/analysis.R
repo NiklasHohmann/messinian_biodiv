@@ -192,8 +192,10 @@ cat("Done. Outputs are in the folder \"figs\" and the variables \"sr_change\" an
 #eco_ind_median["fish", "T vs. M", "whole basin", "simpson"]
 
 
-sr_change[,"TvsM", "whole basin"]
-sr_change[,"MvsZ", "whole basin"]
-eco_ind_median[, "T vs. M", "whole basin", "soerensen"]
-eco_ind_median[, "M vs. Z", "whole basin", "soerensen"]
-eco_ind_median[, "T vs. Z", "whole basin", "soerensen"]
+# sr_change[,"TvsM", "whole basin"]
+# sr_change[,"MvsZ", "whole basin"]
+# eco_ind_median[, "T vs. M", "whole basin", "soerensen"]
+# eco_ind_median[, "M vs. Z", "whole basin", "soerensen"]
+# eco_ind_median[, "T vs. Z", "whole basin", "soerensen"]
+# eco_ind_median[, "T vs. Z", "whole basin", "simpson"]
+# eco_ind_median[, "M vs. Z", "whole basin", "simpson"]
