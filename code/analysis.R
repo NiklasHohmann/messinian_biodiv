@@ -4,7 +4,7 @@ cat("Running analysis, please wait...\n")
 cat("Loading data\n")
 messinian_db <- read.csv(file = "data/messinianDB.csv")
 
-#### Set seet ####
+#### Set seed ####
 set.seed(1)
 
 #### Replace invalid tax names with NA ####
@@ -86,7 +86,7 @@ for (group in group.names.ext){
 
 #### Species richness through time for all groups in all regions ####
 cat("Determining regional species richness\n")
-sr_median = array(data = NA, # mean species richness
+sr_median = array(data = NA, # median species richness
                        dim = c(length(group.names.ext), length(timebins), length(regions.ext)),
                        dimnames = list("group" = group.names.ext,
                                        "timebin" = timebins,
@@ -156,6 +156,49 @@ for (group in c(group.names.ext)){
               mar = c(5,5,1,1))
       dev.off()
     }
+  }
+}
+
+#### Species richness per group and region, rarefied to the same sample size ####
+cat("Determining regional species richness, rarefied to same sample size\n")
+sr_median_comparable = array(data = NA, # median species richness
+                            dim = c(length(group.names.ext), length(timebins), length(regions.ext)),
+                            dimnames = list("group" = group.names.ext,
+                                            "timebin" = timebins,
+                                            "region" = regions.ext))
+
+for (group in group.names.ext){
+  # determine subsampling size
+  subsampleTo = Inf
+  for (ti in timebins){
+    wMed = get_from_db(group, "Western Mediterranean", ti)
+    eMed = get_from_db(group, "Eastern Mediterranean", ti)
+    PPNA = get_from_db(group, "Po Plain-Northern Adriatic", ti)
+    subsampleTo = min(subsampleTo, ceiling(0.8 * (min(c(length(wMed), length(eMed), length(PPNA))))))
+  }
+  for (reg in regions.ext){
+    Tor = get_from_db(group = group, basin = reg, timeslice = "Tortonian" )
+    Mes = get_from_db(group = group, basin = reg, timeslice = "pre-evaporitic Messinian" )
+    Zan = get_from_db(group = group, basin = reg, timeslice = "Zanclean" )
+    Tor_sr = rarefyTaxRichness(mySample = Tor, subsampleTo = subsampleTo, noOfRep = noOfRep)
+    Mes_sr = rarefyTaxRichness(mySample = Mes, subsampleTo = subsampleTo, noOfRep = noOfRep)
+    Zan_sr = rarefyTaxRichness(mySample = Zan, subsampleTo = subsampleTo, noOfRep = noOfRep)
+    sr_median_comparable[group, "Tortonian", reg] = median(Tor_sr)
+    sr_median_comparable[group, "pre-evaporitic Messinian", reg] = median(Mes_sr)
+    sr_median_comparable[group, "Zanclean", reg] = median(Zan_sr)
+    
+    file_name = paste0("figs/sr_through_time_regional_comparable/sr_through_time_comp", group, "_",  reg ,".pdf")
+    ylab = paste0("Species richness \n subsampled to ",  subsampleTo, " Occurrences")
+    main = paste0("Species Richness ", group, " ", reg)
+    ylim = c(0, max(c(Tor_sr, Mes_sr, Zan_sr)))
+    pdf(file = file_name)
+    boxplot(list( "Tortonian" = Tor_sr,
+                  "Messinian" = Mes_sr,
+                  "Zanclean" =  Zan_sr),
+            ylim = ylim,
+            ylab = ylab,
+            main = main)
+    dev.off()
   }
 }
 

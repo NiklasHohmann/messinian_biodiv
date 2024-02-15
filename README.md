@@ -33,7 +33,7 @@ In the RStudio IDE, open the file _messinian_biodiv.Rproj_. This opens the RProj
 source("code/analysis.R")
 ```
 
-to reproduce the results. This will (1) produce all figures in the _figs_ folder and (2) generate variables `sr_change` and `eco_ind_median` in your workspace that contain median values of species richness and ecological indices. To inspect them, use
+to reproduce the results, which might take a few minutes. This will (1) produce all figures in the _figs_ folder and (2) generate variables `sr_change` and `eco_ind_median` in your workspace that contain median values of species richness and ecological indices. To inspect them, use
 
 ```R
 sr_change
@@ -51,6 +51,7 @@ eco_ind_median
   * _eco_timeslice_comp_regional_ : figs of comparison of ecol indices per region
   * _sr_through_time_ : figs of species richness through time
   * _sr_through_time_regional_ : figs of species richness through time per region
+  * _sr_through_time_regional_comparable_ : figs of species richness per region, subsampled to same sample size
 * _.gitignore_ : untracked files
 * _LICENSE_ : Apache 2.0 license text
 * _messinian_biodiv.RProj_ : Rproject file
