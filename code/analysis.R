@@ -4,6 +4,10 @@ cat("Running analysis, please wait...\n")
 cat("Loading data\n")
 messinian_db <- read.csv(file = "data/messinianDB.csv")
 
+#### Clean data ####
+remove_occ = grepl("Considered reworked", messinian_db$Notes, useBytes = TRUE) | grepl("Collected from deposits known as \"Livelli ad Aturia", messinian_db$Notes, useBytes = TRUE)
+messinian_db = messinian_db[!remove_occ,]
+
 #### Set seed ####
 set.seed(1)
 
