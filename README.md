@@ -1,11 +1,11 @@
 # messinian_biodiv
 
-Code for "Late Miocene transformation of Mediterranean Sea biodiversity"  
+Supplementary code for "Late Miocene transformation of Mediterranean Sea biodiversity"  
 Project webpage: [REMARE project](https://sites.google.com/view/kagiadi/projects/remare)
 
 ## Authors
 
-__Niklas Hohmann__  (creator and maintainer of repository)
+__Niklas Hohmann__  (creator and maintainer of repository)  
 Utrecht University  
 email: n.h.hohmann [at] uu.nl  
 Web page: [www.uu.nl/staff/NHohmann](https://www.uu.nl/staff/NHHohmann)  
@@ -27,7 +27,7 @@ Base R (version >= 4) and the RStudio IDE.
 
 ## Reproducing Results
 
-In the RStudio IDE, open the file _messinian_biodiv.Rproj_. This opens the RProject of the same name, and install the `renv` package (if not already installed). Then, run
+In the RStudio IDE, open the file _messinian_biodiv.Rproj_. This opens the RProject of the same name, and installs the `renv` package (if not already installed). Then, run
 
 ```R
 renv::restore()
