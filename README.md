@@ -1,5 +1,5 @@
 # messinian_biodiv
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10787997.svg)](https://doi.org/10.5281/zenodo.10787997)  
 Supplementary code for "Late Miocene transformation of Mediterranean Sea biodiversity"  
 Project webpage: [REMARE project](https://sites.google.com/view/kagiadi/projects/remare)
 
