@@ -5,3 +5,6 @@
 
 # figures
 *.pdf
+
+# don't track .csv
+*.csv
