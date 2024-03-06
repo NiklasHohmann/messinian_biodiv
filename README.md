@@ -27,7 +27,19 @@ Base R (version >= 4) and the RStudio IDE.
 
 ## Reproducing Results
 
-In the RStudio IDE, open the file _messinian_biodiv.Rproj_. This opens the RProject of the same name. Then, run
+In the RStudio IDE, open the file _messinian_biodiv.Rproj_. This opens the RProject of the same name, and install the `renv` package (if not already installed). Then, run
+
+```R
+renv::restore()
+```
+
+in the console to install all dependencies required for the analysis. Next, run
+
+```R
+source("code/download_data.R)
+```
+
+do download the database from Zenodo. Next, run
 
 ```R
 source("code/analysis.R")
@@ -45,18 +57,22 @@ eco_ind_median
 * _code_ : folder with code
   * _analysis.R_ : code for main analysis
   * _helper_function.R_ : aux functions (select data from DB, rarefy species richness & other ecological indices)
-* _data_ : folder containing the Messinina Database
+  * _download_data.R_ : script to download data from Zenodo
+* _data_ : folder containing the Messinina Database. Initially empty, will be filled with data downloaded from Zenodo
 * _figs_ : folder for figures. Initially all subfolders are empty, they will be filled after the code is run (see section _Reproducing Results_)
   * _eco_timeslice_comp_ : figs of comparison of ecol indices
   * _eco_timeslice_comp_regional_ : figs of comparison of ecol indices per region
   * _sr_through_time_ : figs of species richness through time
   * _sr_through_time_regional_ : figs of species richness through time per region
   * _sr_through_time_regional_comparable_ : figs of species richness per region, subsampled to same sample size
+* _renv_ : folder for `renv` package
 * _.gitignore_ : untracked files
+* _.Rprofile_ : R session info
 * _LICENSE_ : Apache 2.0 license text
 * _messinian_biodiv.RProj_ : Rproject file
 * _README_ : README file
+* _renv.lock_ : lockfile for `renv` package
 
 ## Funding
 
-This work was supported by the Austrian Science Fund (FWF) project “Late Miocene Mediterranean Marine Ecosystem Crisis” (2022–2026), Grant DOI 10.55776/V986 (PI: K.Agiadi)."  
+This work was supported by the Austrian Science Fund (FWF) project “Late Miocene Mediterranean Marine Ecosystem Crisis” (2022–2026), Project no. V 986, [DOI 10.55776/V986](https://www.doi.org/10.55776/V986) (PI: K.Agiadi).
