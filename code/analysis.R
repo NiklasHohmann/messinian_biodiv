@@ -8,6 +8,23 @@ messinian_db <- read.csv(file = "data/messinianDB.csv")
 remove_occ = grepl("Considered reworked", messinian_db$Notes, useBytes = TRUE) | grepl("Collected from deposits known as \"Livelli ad Aturia", messinian_db$Notes, useBytes = TRUE)
 messinian_db = messinian_db[!remove_occ,]
 
+#### clean coral type data ####
+corals_data = read.csv(file = "data/coral genera FB.csv")
+corals_data$type = rep(NA, length(corals_data$Genus))
+corals_data$type = replace(corals_data$type, corals_data$Zooxanthellate == "x", "z")
+corals_data$type = replace(corals_data$type, corals_data$Azooxanthellate == "x", "a")
+corals_data$type = replace(corals_data$type, corals_data$notes == "in reef setting", "z")
+corals_data$type = replace(corals_data$type, corals_data$notes == "not in reef setting", "a")
+
+# introduce new tax group classification where a and z coral are analyzed separately
+messinian_db$group.name_sc = messinian_db$group.name  # sc = split corals
+for (i in seq_along(messinian_db$ID)){
+  if (messinian_db$group.name[i] == "corals" & messinian_db$Genus.name[i] %in% corals_data$Genus){
+    type = corals_data$type[corals_data$Genus == messinian_db$Genus.name[i]]
+    messinian_db$group.name_sc[i] = paste(messinian_db$group.name[i], type, sep = "_")
+  }
+}
+
 #### Set seed ####
 set.seed(1)
 
@@ -16,11 +33,15 @@ messinian_db$Species.name = replace(messinian_db$Species.name, messinian_db$Spec
 messinian_db$Genus.name = replace(messinian_db$Genus.name, messinian_db$Genus.name == "indet.", NA)
 messinian_db = messinian_db[ !messinian_db$Family == "indet.",  ]
 
+
+
 #### Constants ####
 timebins <- unique(messinian_db$Age)[c(3, 1, 2)] # sorted from old to young
 regions <- unique(messinian_db$region.new)
 group.names <- unique(messinian_db$group.name)
 group.names.ext = c(group.names, "all groups")
+group.names_sc  = unique(messinian_db$group.name_sc[messinian_db$group.name_sc != "corals"]) # with corals split
+group.names.ext_sc = c(group.names_sc, "all groups") 
 regions.ext = c(regions, "whole basin")
 eco_index_names = c("soerensen", "simpson", "nestedness")
 timebin_comp = c("T vs. M", "M vs. Z", "T vs. Z")
@@ -58,6 +79,35 @@ for (group in group.names.ext){
   dev.off()
 }
 
+for (tax_level in c("genus")){
+  for (group in c("corals_a", "corals_z")){
+    # extract species names
+    Tor = get_from_db(group = group, basin = "whole basin", timeslice = "Tortonian" , tax_groups = "split corals", taxLevel = tax_level)
+    Mes = get_from_db(group = group, basin = "whole basin", timeslice = "pre-evaporitic Messinian" , tax_groups = "split corals", taxLevel =  tax_level)
+    Zan = get_from_db(group = group, basin = "whole basin", timeslice = "Zanclean" , tax_groups = "split corals", taxLevel = tax_level)
+    # define subsampling size (80 % of smallest sample)
+    subsampleTo = ceiling(0.8 * (min(c(length(Tor), length(Mes), length(Zan)))))
+    # subsample noOfRep times
+    Tor_sr = rarefyTaxRichness(mySample = Tor, subsampleTo = subsampleTo, noOfRep = noOfRep)
+    Mes_sr = rarefyTaxRichness(mySample = Mes, subsampleTo = subsampleTo, noOfRep = noOfRep)
+    Zan_sr = rarefyTaxRichness(mySample = Zan, subsampleTo = subsampleTo, noOfRep = noOfRep)
+    # make figure
+    file_name = paste0("figs/sr_through_time/sr_through_time_whole_basin_",group, "_", tax_level, "_level.pdf")
+    main = paste0("Species Richness ", group, " whole basin, ",  tax_level, "level")
+    ylim = c(0, max(c(Tor_sr, Mes_sr, Zan_sr)))
+    ylab = paste0("taxonomic richness \n subsampled to ",  subsampleTo, " Occurrences ")
+    pdf(file = file_name)
+    boxplot(list( "Tortonian" = Tor_sr,
+                  "Messinian" = Mes_sr,
+                  "Zanclean" =  Zan_sr),
+            ylim = ylim,
+            ylab = ylab,
+            main = main)
+    dev.off()
+  }
+}
+
+
 #### Ecological indices through time (whole basin, all groups) ####
 cat("Determining ecological indices\n")
 for (group in group.names.ext){
@@ -85,6 +135,36 @@ for (group in group.names.ext){
             ylab = ylab,
             mar = c(5,5,1,1))
     dev.off()
+  }
+}
+
+for (tax_level in c("genus")){
+  for (group in c("corals_a", "corals_z")){
+    # extract species names
+    Tor = get_from_db(group = group, basin = "whole basin", timeslice = "Tortonian", tax_groups = "split corals" , taxLevel = tax_level)
+    Mes = get_from_db(group = group, basin = "whole basin", timeslice = "pre-evaporitic Messinian" , tax_groups = "split corals", taxLevel = tax_level)
+    Zan = get_from_db(group = group, basin = "whole basin", timeslice = "Zanclean" , tax_groups = "split corals", taxLevel = tax_level)
+    # define subsampling size (80 % of smallest sample)
+    subsampleTo = ceiling(0.8 * (min(c(length(Tor), length(Mes), length(Zan)))))
+    # subsample noOfRep times
+    TM = rarefyEcoIndexes(Tor, Mes, subsampleTo, noOfRep)
+    MZ = rarefyEcoIndexes(Mes, Zan, subsampleTo, noOfRep)
+    TZ = rarefyEcoIndexes(Tor, Zan, subsampleTo, noOfRep)
+    # make plots
+    for (ind in eco_index_names){
+      file_name = paste0("figs/eco_timeslice_comp/",group, "_", ind,"_", tax_level, "level_whole_basin.pdf")
+      pdf(file = file_name)
+      main = paste0(ind, " for " , group, " whole basin")
+      ylab = paste0(ind, "\n subsampled to ",  subsampleTo, " Occurrences", tax_level, "level")
+      boxplot(list("T vs. M" = TM[[ind]],
+                   "M vs. Z" = MZ[[ind]],
+                   "T vs. Z" = TZ[[ind]]),
+              ylim = c(0,1),
+              main = main,
+              ylab = ylab,
+              mar = c(5,5,1,1))
+      dev.off()
+    }
   }
 }
 
