@@ -1,4 +1,4 @@
-get_from_db=function(group, basin, timeslice, taxLevel = "species"){
+get_from_db=function(group, basin, timeslice, taxLevel = "species", tax_groups = "joint corals"){
   #'
   #' @title extract occurrence from Messinian database
   #' 
@@ -10,16 +10,29 @@ get_from_db=function(group, basin, timeslice, taxLevel = "species"){
   #' @param group character, element of _group.names_ or "all groups". Taxonomic groups to retreive
   #' @param basin character, element of _regions_ or "whole basin". From which area occurrences are selected
   #' @param timeslice character, element of _timebins_ or "all timeslices". Time interval of interest
+  #' @param tax_groups type of taxonomic groups used. either "joint corals" or "split corals". determines whether corals are split into a and z corals or not
   #' 
   #' @returns character vector of taxon names on the specified taxonomic level
   
   #### groups 
-  stopifnot(group %in% c('all groups',group.names))
+  stopifnot(tax_groups %in% c("joint corals", "split corals"))
+  if (tax_groups == "joint corals"){
+    stopifnot(group %in% group.names.ext)
+  }
+  if (tax_groups == "split corals"){
+    stopifnot(group %in% group.names.ext_sc)
+  }
+  
   if (group=='all groups'){
     groupIndex=rep(TRUE,length(messinian_db$group.name))
   }
   else{
-    groupIndex=messinian_db$group.name==group
+    if (tax_groups == "joint corals"){
+      groupIndex=messinian_db$group.name==group
+    }
+    if (tax_groups == "split corals"){
+      groupIndex = messinian_db$group.name_sc == group
+    }
   }
   #### timeslices
   stopifnot(timeslice %in% c('all timeslices', timebins))
