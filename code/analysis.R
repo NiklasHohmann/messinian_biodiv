@@ -93,7 +93,7 @@ for (tax_level in c("genus")){
     Zan_sr = rarefyTaxRichness(mySample = Zan, subsampleTo = subsampleTo, noOfRep = noOfRep)
     # make figure
     file_name = paste0("figs/sr_through_time/sr_through_time_whole_basin_",group, "_", tax_level, "_level.pdf")
-    main = paste0("Species Richness ", group, " whole basin, ",  tax_level, "level")
+    main = paste0("Species Richness ", group, " whole basin, ",  tax_level, " level")
     ylim = c(0, max(c(Tor_sr, Mes_sr, Zan_sr)))
     ylab = paste0("taxonomic richness \n subsampled to ",  subsampleTo, " Occurrences ")
     pdf(file = file_name)
@@ -152,7 +152,7 @@ for (tax_level in c("genus")){
     TZ = rarefyEcoIndexes(Tor, Zan, subsampleTo, noOfRep)
     # make plots
     for (ind in eco_index_names){
-      file_name = paste0("figs/eco_timeslice_comp/",group, "_", ind,"_", tax_level, "level_whole_basin.pdf")
+      file_name = paste0("figs/eco_timeslice_comp/",group, "_", ind,"_", tax_level, "_level_whole_basin.pdf")
       pdf(file = file_name)
       main = paste0(ind, " for " , group, " whole basin")
       ylab = paste0(ind, "\n subsampled to ",  subsampleTo, " Occurrences", tax_level, "level")
