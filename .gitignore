@@ -8,3 +8,5 @@
 
 # don't track .csv
 *.csv
+# track assignment of coral types
+!data/coral genera FB.csv 
