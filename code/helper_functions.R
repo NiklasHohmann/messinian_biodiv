@@ -121,3 +121,24 @@ rarefyEcoIndexes=function(mySample1, mySample2, subsampleTo, noOfRep){
   }
   return(out)
 }
+
+rarefyTaxGradient=function(mySample1, mySample2, subsampleTo,noOfRep){
+  #'
+  #' @title rarefy differences in taxonomic richness
+  #' 
+  #' @description
+  #' use rarefaction do determine the difference in taxonomic richness between two samples
+  #' 
+  #' @param mySample1 vector of taxonomic names in first sample
+  #' @param mySample2 vector of taxon names in second sample
+  #' @param subsampleTo integer, nomber of occurrences to target for subsampling. Must be larger than length(mySample)
+  #' @param noOfRep integer, number of subsampling repetitions
+  #' 
+  #' @returns integer vector of length noOfRep, containing tax richnesses at each repetition
+  stopifnot(length(mySample1)>=subsampleTo)
+  stopifnot(length(mySample2)>=subsampleTo)
+  stopifnot(!is.na(mySample1))
+  stopifnot(!is.na(mySample2))
+  gradient=sapply(seq_len(noOfRep), function(x) length(unique(sample(mySample1,size=subsampleTo,replace=FALSE))) - length(unique(sample(mySample2,size=subsampleTo,replace=FALSE))))
+  return(gradient)
+}

@@ -348,3 +348,60 @@ cat("Done. Outputs are in the folder \"figs\" and the variables \"sr_change\" an
 # eco_ind_median["species",, "T vs. Z", "whole basin", "soerensen"]
 # eco_ind_median["species",, "T vs. Z", "whole basin", "simpson"]
 # eco_ind_median["species",, "M vs. Z", "whole basin", "simpson"]
+
+#### Test for statements in ms ####
+
+# genus richness of bivalves shows a smaller decrease from the Tortonian to the pre-evaporitic Messinian
+group.name = "bivalves"
+t1 = timebins[1]
+t2 = timebins[2]
+
+biv_tor_gen = get_from_db(group.name, "whole basin", t1, "genus")
+biv_mes_gen = get_from_db(group.name, "whole basin", t2, "genus")
+biv_tor_spe = get_from_db(group.name, "whole basin", t1)
+biv_mes_spe = get_from_db(group.name, "whole basin", t2)
+
+subsampleTo = min(ceiling(0.8 * c(length(biv_tor_gen), length(biv_mes_gen), length(biv_tor_spe), length(biv_mes_spe))))
+biv_gen_gradient = rarefyTaxGradient(biv_tor_gen, biv_mes_gen, subsampleTo, noOfRep)
+biv_spe_gradient = rarefyTaxGradient(biv_tor_spe, biv_mes_spe, subsampleTo, noOfRep)
+
+biv_diff_tax_grad_test = wilcox.test(biv_gen_gradient, biv_spe_gradient, alternative = "less")
+
+# Gastropod genus richness shows marginal increase in the Zanclean (Fig. S1H), while species richness remains the same 
+group.name = "gastropods"
+t1 = timebins[2]
+t2 = timebins[3]
+
+gas_mes_gen = get_from_db(group.name, "whole basin", t1, "genus")
+gas_zan_gen = get_from_db(group.name, "whole basin", t2, "genus")
+gas_mes_spe = get_from_db(group.name, "whole basin", t1)
+gas_zan_spe = get_from_db(group.name, "whole basin", t2)
+
+subsampleTo = min(ceiling(0.8 * c(length(gas_mes_gen), length(gas_mes_gen), length(gas_zan_spe), length(gas_zan_spe))))
+
+gen_grad = rarefyTaxGradient(gas_mes_gen, gas_zan_gen, subsampleTo, noOfRep)
+spe_grad = rarefyTaxGradient(gas_mes_spe, gas_zan_spe, subsampleTo, noOfRep)
+
+gas_gen_test_dec = wilcox.test(gen_grad, alternative = "less")
+gas_spe_test_unequal = wilcox.test(spe_grad)
+quantile(spe_grad)
+
+
+# For echinoids, genus richness increases (Fig. S1J), but species richness decreases (Fig. 3J) from the Tortonian to the pre-evaporitic Messinian
+
+group.name = "echinoids"
+t1 = timebins[1]
+t2 = timebins[2]
+
+ech_tor_gen = get_from_db(group.name, "whole basin", t1, "genus")
+ech_mes_gen = get_from_db(group.name, "whole basin", t2, "genus")
+ech_tor_spe = get_from_db(group.name, "whole basin", t1)
+ech_mes_spe = get_from_db(group.name, "whole basin", t2)
+
+subsampleTo = min(ceiling(0.8 * c(length(ech_mes_gen), length(ech_mes_gen), length(ech_tor_spe), length(ech_mes_spe))))
+
+gen_grad = rarefyTaxGradient(ech_tor_gen, ech_mes_gen, subsampleTo, noOfRep)
+spe_grad = rarefyTaxGradient(ech_tor_spe, ech_mes_spe, subsampleTo, noOfRep)
+
+ech_gen_inc_test = wilcox.test(gen_grad , alternative = "less")
+ech_spe_dec_test = wilcox.test(spe_grad, alternative = "greater")
