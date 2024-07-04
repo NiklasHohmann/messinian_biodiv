@@ -405,3 +405,102 @@ spe_grad = rarefyTaxGradient(ech_tor_spe, ech_mes_spe, subsampleTo, noOfRep)
 
 ech_gen_inc_test = wilcox.test(gen_grad , alternative = "less")
 ech_spe_dec_test = wilcox.test(spe_grad, alternative = "greater")
+
+# Species richness decreased from the Tortonian to the pre-evaporitic Messinian for calcareous nannoplankton, dinocysts, , planktic foraminifera , corals , bivalves, echinoids, and bony fishes 
+sel_groups = c("nanoplankton", "dinocysts", "planktic_foraminifera", "corals", "bivalves", "echinoids", "fish")
+t1 = timebins[1]
+t2 = timebins[2]
+testreslist1  = list()
+for (group.name in sel_groups){
+  sp_r_tor = get_from_db(group = group.name, basin = "whole basin", timeslice = t1)
+  sp_r_mes = get_from_db(group = group.name, basin = "whole basin", timeslice = t2)
+  sp_r_zan = get_from_db(group = group.name, basin = "whole basin", timeslice = timebins[3])
+  subsampleTo = ceiling(0.8 * (min(c(length(sp_r_tor), length(sp_r_mes), length(sp_r_zan)))))
+  sp_grad = rarefyTaxGradient(sp_r_tor, sp_r_mes, subsampleTo, noOfRep)
+  testreslist1[[group.name]] = wilcox.test(sp_grad, alternative = "greater")
+}
+p_vals = sapply(testreslist1, function(x) x$p.value)
+
+# ostracod species richness remains at the same level
+
+group.name = "ostracods"
+
+t1 = timebins[1]
+t2 = timebins[2]
+  sp_r_tor = get_from_db(group = group.name, basin = "whole basin", timeslice = t1)
+  sp_r_mes = get_from_db(group = group.name, basin = "whole basin", timeslice = t2)
+  sp_r_zan = get_from_db(group = group.name, basin = "whole basin", timeslice = timebins[3])
+  subsampleTo = ceiling(0.8 * (min(c(length(sp_r_tor), length(sp_r_mes), length(sp_r_zan)))))
+  sp_grad = rarefyTaxGradient(sp_r_tor, sp_r_mes, subsampleTo, noOfRep)
+wilcox.test(sp_grad)
+
+# species richness increased from the Tortonian to the Messinian for benthic foraminifera, gastropods, and bryozoans 
+
+sel_groups = c("benthic_foraminifera", "gastropods", "bryozoans")
+t1 = timebins[1]
+t2 = timebins[2]
+testreslist2  = list()
+for (group.name in sel_groups){
+  sp_r_tor = get_from_db(group = group.name, basin = "whole basin", timeslice = t1)
+  sp_r_mes = get_from_db(group = group.name, basin = "whole basin", timeslice = t2)
+  sp_r_zan = get_from_db(group = group.name, basin = "whole basin", timeslice = timebins[3])
+  subsampleTo = ceiling(0.8 * (min(c(length(sp_r_tor), length(sp_r_mes), length(sp_r_zan)))))
+  sp_grad = rarefyTaxGradient(sp_r_tor, sp_r_mes, subsampleTo, noOfRep)
+  testreslist2[[group.name]] = wilcox.test(sp_grad, alternative = "less")
+}
+p_vals = sapply(testreslist2, function(x) x$p.value)
+
+# From the Messinian to the Zanclean, species richness remained approximately the same for calcareous nannoplankton planktic and benthic foraminifera, gastropods, and bryozoans
+
+sel_groups = c("nanoplankton", "benthic_foraminifera", "gastropods", "bryozoans"  )
+t1 = timebins[2]
+t2 = timebins[3]
+testreslist3 = list()
+
+for (group.name in sel_groups){
+  sp_r_tor = get_from_db(group = group.name, basin = "whole basin", timeslice = timebins[1])
+  sp_r_mes = get_from_db(group = group.name, basin = "whole basin", timeslice = t1)
+  sp_r_zan = get_from_db(group = group.name, basin = "whole basin", timeslice = t2)
+  subsampleTo = ceiling(0.8 * (min(c(length(sp_r_tor), length(sp_r_mes), length(sp_r_zan)))))
+  sp_grad = rarefyTaxGradient(sp_r_mes, sp_r_zan, subsampleTo, noOfRep)
+  testreslist3[[group.name]] = wilcox.test(sp_grad)
+  hist(sp_grad, main = paste( group.name, t1, t2))
+}
+p_vals = sapply(testreslist3, function(x) x$p.value)
+
+# From the Messinian to the Zanclean, there is a decrease in richness for dinocysts, ostracods, and echinoids. 
+
+sel_groups = c("dinocysts", "ostracods"  ,  "echinoids")
+t1 = timebins[2]
+t2 = timebins[3]
+testreslist4 = list()
+
+for (group.name in sel_groups){
+  sp_r_tor = get_from_db(group = group.name, basin = "whole basin", timeslice = timebins[1])
+  sp_r_mes = get_from_db(group = group.name, basin = "whole basin", timeslice = t1)
+  sp_r_zan = get_from_db(group = group.name, basin = "whole basin", timeslice = t2)
+  subsampleTo = ceiling(0.8 * (min(c(length(sp_r_tor), length(sp_r_mes), length(sp_r_zan)))))
+  sp_grad = rarefyTaxGradient(sp_r_mes, sp_r_zan, subsampleTo, noOfRep)
+  testreslist4[[group.name]] = wilcox.test(sp_grad, alternative = "greater")
+  hist(sp_grad, main = paste( group.name, t1, t2))
+}
+p_vals = sapply(testreslist4, function(x) x$p.value)
+
+# Species richness increased from the Messinian to the Zanclean for corals, bivalves, and bony fishes . 
+
+sel_groups = c("corals", "bivalves"  ,  "fish")
+t1 = timebins[2]
+t2 = timebins[3]
+testreslist5 = list()
+
+for (group.name in sel_groups){
+  sp_r_tor = get_from_db(group = group.name, basin = "whole basin", timeslice = timebins[1])
+  sp_r_mes = get_from_db(group = group.name, basin = "whole basin", timeslice = t1)
+  sp_r_zan = get_from_db(group = group.name, basin = "whole basin", timeslice = t2)
+  subsampleTo = ceiling(0.8 * (min(c(length(sp_r_tor), length(sp_r_mes), length(sp_r_zan)))))
+  sp_grad = rarefyTaxGradient(sp_r_mes, sp_r_zan, subsampleTo, noOfRep)
+  testreslist5[[group.name]] = wilcox.test(sp_grad, alternative = "less")
+  hist(sp_grad, main = paste( group.name, t1, t2))
+}
+p_vals = sapply(testreslist5, function(x) x$p.value)
+
