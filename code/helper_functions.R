@@ -1,4 +1,4 @@
-get_from_db=function(group, basin, timeslice, taxLevel = "species"){
+get_from_db=function(group, basin, timeslice, taxLevel = "species", tax_groups = "joint corals"){
   #'
   #' @title extract occurrence from Messinian database
   #' 
@@ -10,16 +10,29 @@ get_from_db=function(group, basin, timeslice, taxLevel = "species"){
   #' @param group character, element of _group.names_ or "all groups". Taxonomic groups to retreive
   #' @param basin character, element of _regions_ or "whole basin". From which area occurrences are selected
   #' @param timeslice character, element of _timebins_ or "all timeslices". Time interval of interest
+  #' @param tax_groups type of taxonomic groups used. either "joint corals" or "split corals". determines whether corals are split into a and z corals or not
   #' 
   #' @returns character vector of taxon names on the specified taxonomic level
   
   #### groups 
-  stopifnot(group %in% c('all groups',group.names))
+  stopifnot(tax_groups %in% c("joint corals", "split corals"))
+  if (tax_groups == "joint corals"){
+    stopifnot(group %in% group.names.ext)
+  }
+  if (tax_groups == "split corals"){
+    stopifnot(group %in% group.names.ext_sc)
+  }
+  
   if (group=='all groups'){
     groupIndex=rep(TRUE,length(messinian_db$group.name))
   }
   else{
-    groupIndex=messinian_db$group.name==group
+    if (tax_groups == "joint corals"){
+      groupIndex=messinian_db$group.name==group
+    }
+    if (tax_groups == "split corals"){
+      groupIndex = messinian_db$group.name_sc == group
+    }
   }
   #### timeslices
   stopifnot(timeslice %in% c('all timeslices', timebins))
@@ -107,4 +120,25 @@ rarefyEcoIndexes=function(mySample1, mySample2, subsampleTo, noOfRep){
     out$nestedness[i]=(b+c)/(2*a+b+c)-(min(c(b,c))/(a+min(c(b,c))))
   }
   return(out)
+}
+
+rarefyTaxGradient=function(mySample1, mySample2, subsampleTo,noOfRep){
+  #'
+  #' @title rarefy differences in taxonomic richness
+  #' 
+  #' @description
+  #' use rarefaction do determine the difference in taxonomic richness between two samples
+  #' 
+  #' @param mySample1 vector of taxonomic names in first sample
+  #' @param mySample2 vector of taxon names in second sample
+  #' @param subsampleTo integer, nomber of occurrences to target for subsampling. Must be larger than length(mySample)
+  #' @param noOfRep integer, number of subsampling repetitions
+  #' 
+  #' @returns integer vector of length noOfRep, containing tax richnesses at each repetition
+  stopifnot(length(mySample1)>=subsampleTo)
+  stopifnot(length(mySample2)>=subsampleTo)
+  stopifnot(!is.na(mySample1))
+  stopifnot(!is.na(mySample2))
+  gradient=sapply(seq_len(noOfRep), function(x) length(unique(sample(mySample1,size=subsampleTo,replace=FALSE))) - length(unique(sample(mySample2,size=subsampleTo,replace=FALSE))))
+  return(gradient)
 }

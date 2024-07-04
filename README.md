@@ -38,7 +38,7 @@ renv::restore()
 in the console to install all dependencies required for the analysis. Next, run
 
 ```R
-source("code/download_data.R)
+source("code/download_data.R")
 ```
 
 do download the database from Zenodo. Next, run
