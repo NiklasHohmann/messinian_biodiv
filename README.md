@@ -54,6 +54,8 @@ sr_change
 eco_ind_median
 ```
 
+Details on how to produce the maps can be found in `code/make_maps.R`.
+
 ## Repository Structure
 
 * _code_ : folder with code
