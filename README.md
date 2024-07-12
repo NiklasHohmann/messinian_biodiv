@@ -62,7 +62,7 @@ Details on how to produce the maps can be found in `code/make_maps.R`.
   * _analysis.R_ : code for main analysis
   * _helper_function.R_ : aux functions (select data from DB, rarefy species richness & other ecological indices)
   * _download_data.R_ : script to download data from Zenodo
-* _data_ : folder containing the Messinina Database. Initially empty, will be filled with data downloaded from Zenodo
+* _data_ : folder containing the Messinina Database. Contains initially only one file with coral groud assignment, will be filled with data downloaded from Zenodo.
 * _figs_ : folder for figures. Initially all subfolders are empty, they will be filled after the code is run (see section _Reproducing Results_)
   * _eco_timeslice_comp_ : figs of comparison of ecol indices
   * _eco_timeslice_comp_regional_ : figs of comparison of ecol indices per region
